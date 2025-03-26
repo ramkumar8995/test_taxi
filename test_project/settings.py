@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4#w0uzrx0(dyqo(j221q+5j#@+%-$r(gaafq0xi_7_8_!*1vfu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['taxi.onrender.com','']
+ALLOWED_HOSTS = ['https://test-taxi.onrender.com','*']
 
 
 # Application definition
@@ -127,7 +127,7 @@ import os
 import dj_database_url
 
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
+    "default": dj_database_url.config(default='postgresql://taxidb_xtfu_user:Qkopt1YeBfhdbNOR6pDlziS0b18NaN5y@dpg-cvhuphqqgecs73d58cq0-a/taxidb_xtfu')
 }
 
 STATIC_URL = "/static/"
