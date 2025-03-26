@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <title>Search Results</title>
+    <style>
+        body {
+            <!-- font-family: 'Arial', sans-serif; -->
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .search-results {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-query {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #777;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        td {
+            background-color: #fafafa;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover td {
+            background-color: #e1e1e1;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 18px;
+            color: #999;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-results">
+        <h2>Search Results</h2>
+        <p class="search-query">Showing results for: "{{ query }}"</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Driver</th>
+                    <th>Pickup</th>
+                    <th>Dropoff</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trips %}
+                <tr>
+                    <td>{{ trip.driver.username }}</td>
+                    <td>{{ trip.from_place }}</td>
+                    <td>{{ trip.to_place }}</td>
+                    <td>{{ trip.trip_time }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="empty-message">No trips found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'index' %}" class="back-button">← Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

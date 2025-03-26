@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
+        }
+        h2 {
+            color: #ffcc00;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .summary div {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        .ride-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: #222;
+            color: #fff;
+        }
+        .ride-table th, .ride-table td {
+            padding: 10px;
+            border: 1px solid #444;
+        }
+        .ride-table th {
+            background: #ffcc00;
+            color: black;
+        }
+        .ride-button, .add-ride, .logout-button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .ride-button {
+            background: #007bff;
+            color: white;
+        }
+        .add-ride {
+            background: #28a745;
+            color: white;
+        }
+        .logout-button {
+            background: #dc3545;
+            color: white;
+        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        input, select, button {
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <form method="GET" action="{% url 'search_trips' %}">
+        <input type="text" name="q" placeholder="Search trips..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+    
+
+    <div class="container">
+        <h2>Taxi Earnings Dashboard</h2>
+        <button class="logout-button" onclick="window.location.href='/logout'">Logout</button>
+
+        <div class="summary">
+            <div>Daily Earnings: £{{ daily_total }}</div>
+            <div>Weekly Earnings: £{{ weekly_total }}</div>
+            <div>Monthly Earnings: £{{ monthly_total }}</div>
+            <div>Yearly Earnings: £{{ yearly_total }}</div>
+        </div>
+
+        <button class="add-ride" onclick="openModal()">+ Add New Ride</button>
+
+        <table class="ride-table">
+            <tr>
+                {% if request.user.is_superuser %}
+                    <th>Driver</th>
+                {% endif %}
+                <th>Date & Time</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Fare (£)</th>
+                <th>Payment</th>
+                <th>Details</th>
+            </tr>
+            
+            {% for trip in trips %}
+<tr>
+    {% if request.user.is_superuser %}
+        <td>{{ trip.driver.username }}</td>
+    {% endif %}
+    <td>{{ trip.trip_time }}</td>
+    <td>{{ trip.from_place }}</td>
+    <td>{{ trip.to_place }}</td>
+    <td>£{{ trip.fare }}</td>
+    <td>{{ trip.payment_type }}</td>
+    <td>
+        <button class="ride-button"
+                onclick="alert('Trip from {{ trip.from_place }} to {{ trip.to_place }}.\nFare: £{{ trip.fare }}\nPayment: {{ trip.payment_type }}\nTip: £{{ trip.tip }}')">
+            View
+        </button>
+    </td>
+</tr>
+{% endfor %}
+
+        </table>
+    </div>
+
+    <!-- Add Ride Modal -->
+    <div class="modal" id="rideModal">
+        <div class="modal-content">
+            <h3>New Ride</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="from_place" placeholder="From Place" required>
+                <input type="text" name="to_place" placeholder="To Place" required>
+                <input type="number" step="0.01" name="fare" placeholder="Fare (£)" required>
+                <select name="payment_type" required>
+                    <option value="">Select Payment Type</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="Paid to Company">Paid to Company</option>
+                </select>
+                <input type="number" step="0.01" name="tip" placeholder="Tip (£)">
+                <button type="submit">Save Ride</button>
+            </form>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() { document.getElementById("rideModal").style.display = "flex"; }
+        function closeModal() { document.getElementById("rideModal").style.display = "none"; }
+    </script>
+
+</body>
+</html>
